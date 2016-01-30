@@ -11,13 +11,18 @@ property=$2
 #typ=int
 typ=$3
 
+extension=$(basename `pwd`)
+extension_normalize=`echo "$extension" | sed 's/_//g'`
+model_normalize=`echo "$model" | tr '[:upper:]' '[:lower:]'`
+tablename="tx_${extension_normalize}_domain_model_${model_normalize}"
+
 model_file=Classes/Domain/Model/${model}.php
-tca_file=Configuration/TCA/${model}.php
+tca_file=Configuration/TCA/${tablename}.php
+
+[[ -e "$tca_file" ]] || tca_file=Configuration/TCA/${model}.php
 
 # TODO: search backwards for ext_emconf.php and cd to that directory and use it as extension name
 # TODO: fail if ext_emconf.php is not found (probably the wrong directory)
-extension=$(basename `pwd`)
-tablename=$(sed -n "s/^\$GLOBALS\['TCA'\]\['\([^']*\)'].*/\1/p" $tca_file)
 field=`echo $property | sed -r 's/([a-z]+)([A-Z][a-z]+)/\1_\l\2/g'`
 uproperty=`echo $property | sed -r 's/^./\u&/'`
 
