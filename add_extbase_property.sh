@@ -7,10 +7,6 @@
 
 model=$1
 property=$2
-
-# Working for int-only currently
-# Need to create a lookup table for type-related definitions in ext_tables.sql/TCA (and Model)
-#typ=int
 typ=$3
 
 extension=$(basename `pwd`)
