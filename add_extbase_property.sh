@@ -4,6 +4,7 @@
 # TODO: fail if there are uncommitted changes
 # TODO: @required support
 # TODO: add relation with optional @lazy support
+# TODO: search backwards for ext_emconf.php and cd to that directory and use it as extension name
 
 if [ ! -e "ext_emconf.php" ]; then
 	echo "Error: This script needs to be run from an extensions root dir"
@@ -57,8 +58,6 @@ tca_file=Configuration/TCA/${tablename}.php
 
 [[ -e "$tca_file" ]] || tca_file=Configuration/TCA/${model}.php
 
-# TODO: search backwards for ext_emconf.php and cd to that directory and use it as extension name
-# TODO: fail if ext_emconf.php is not found (probably the wrong directory)
 field=`echo $property | sed -r 's/([a-z]+)([A-Z][a-z]+)/\1_\l\2/g'`
 uproperty=`echo $property | sed -r 's/^./\u&/'`
 
