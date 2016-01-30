@@ -2,6 +2,8 @@
 
 # TODO: fail if the current directon is not under version control
 # TODO: fail if there are uncommitted changes
+# TODO: @required support
+# TODO: add relation with optional @lazy support
 
 model=$1
 property=$2
