@@ -30,27 +30,17 @@ declare -A type_map=(
 	["string"]="string"
 	["text"]="string"
 	["rte"]="string"
-)
 
-declare -A tca_types=(
-	["int"]="input"
-	["string"]="input"
-	["text"]="text"
-	["rte"]="text"
-)
-
-declare -A tca_option_map=(
-	["int"]="'size' => 30"
-	["string"]="'size' => 30"
-	["text"]="'cols' => 40, 'rows' => 15"
-	["rte"]="'cols' => 40, 'rows' => 15"
-)
-
-declare -A sql_types=(
-	["int"]="int(11) unsigned DEFAULT '0'"
-	["string"]="varchar(255) DEFAULT '' NOT NULL"
-	["text"]="text NOT NULL"
-	["rte"]="text NOT NULL"
+	["password"]="string"
+	["float"]="float"
+	["bool"]="bool"
+	["date"]="\\DateTime"
+	["datetime"]="\\DateTime"
+	["time"]="int"
+	["timesec"]="int"
+	["select"]="int"
+	["date_timestamp"]="\\DateTime"
+	["datetime_timestamp"]="\\DateTime"
 )
 
 declare -A default_values=(
@@ -58,14 +48,96 @@ declare -A default_values=(
 	["string"]="''"
 	["text"]="''"
 	["rte"]="''"
+
+	["password"]="''"
+	["float"]="0.0"
+	["bool"]="false"
+	["date"]="null"
+	["datetime"]="null"
+	["time"]="0"
+	["timesec"]="0"
+	["select"]="0"
+	["date_timestamp"]="null"
+	["datetime_timestamp"]="null"
+)
+
+declare -A tca_types=(
+	["int"]="input"
+	["string"]="input"
+	["text"]="text"
+	["rte"]="text"
+
+	["password"]="input"
+	["float"]="input"
+	["bool"]="check"
+	["date"]="input"
+	["datetime"]="input"
+	["time"]="input"
+	["timesec"]="input"
+	["select"]="select"
+	["date_timestamp"]="input"
+	["datetime_timestamp"]="input"
+)
+
+declare -A tca_evals=(
+	["int"]="trim,int"
+	["string"]="trim"
+	["text"]="trim"
+	["rte"]="trim"
+
+	["password"]="nospace,password"
+	["float"]="double2"
+	["bool"]=""
+	["date"]="date"
+	["datetime"]="datetime"
+	["time"]="time"
+	["timesec"]="timesec"
+	["select"]=""
+	["date_timestamp"]="date"
+	["datetime_timestamp"]="datetime"
+)
+
+declare -A tca_option_map=(
+	["int"]="'size' => 30"
+	["string"]="'size' => 30"
+	["text"]="'cols' => 40, 'rows' => 15"
+	["rte"]="'cols' => 40, 'rows' => 15"
+
+	["password"]="'size' => 30"
+	["float"]="'size' => 30"
+	["bool"]="'default' => 0"
+	["date"]="'dbType' => 'date', 'size' => 7, 'checkbox' => 0, 'default' => '0000-00-00'"
+	["datetime"]="'dbType' => 'date', 'size' => 12, 'checkbox' => 0, 'default' => '0000-00-00 00:00:00'"
+	["time"]="'size' => 4, 'checkbox' => 1, 'default' => time()"
+	["timesec"]="'size' => 6, 'checkbox' => 1, 'default' => time()"
+	["select"]="'renderType' => 'selectSingle', 'size' => 1, 'maxitems' => 1, 'items' => [['-- Label --', 0]]"
+	["date_timestamp"]="'size' => 7, 'checkbox' => 1, 'default' => time()"
+	["datetime_timestamp"]="'size' => 12, 'checkbox' => 1, 'default' => time()"
+)
+
+declare -A sql_types=(
+	["int"]="int(11) unsigned DEFAULT '0' NOT NULL"
+	["string"]="varchar(255) DEFAULT '' NOT NULL"
+	["text"]="text NOT NULL"
+	["rte"]="text NOT NULL"
+
+	["password"]="varchar(255) DEFAULT '' NOT NULL"
+	["float"]="double(11,2) DEFAULT '0.00' NOT NULL"
+	["bool"]="tinyint(1) unsigned DEFAULT '0' NOT NULL"
+	["date"]="date DEFAULT '0000-00-00'"
+	["datetime"]="datetime DEFAULT '0000-00-00 00:00:00'"
+	["time"]="int(11) DEFAULT '0' NOT NULL"
+	["time_sec"]="int(11) DEFAULT '0' NOT NULL"
+	["select_list"]="int(11) DEFAULT '0' NOT NULL"
+	["date_timestamp"]="int(11) DEFAULT '0' NOT NULL"
+	["datetime_timestamp"]="int(11) DEFAULT '0' NOT NULL"
 )
 
 php_type="${type_map["$typ"]}"
+default_value="${default_values["$typ"]}"
 tca_type="${tca_types["$typ"]}"
 tca_options="${tca_option_map["$typ"]}"
 sql_type="${sql_types["$typ"]}"
-default_value="${default_values["$typ"]}"
-
 
 #######################################################################################################################
 
