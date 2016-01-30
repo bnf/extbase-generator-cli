@@ -10,6 +10,39 @@ if [ ! -e "ext_emconf.php" ]; then
 	exit 1
 fi
 
+if [ $# -lt 3 ]; then
+	echo "Usage:"
+	echo "  `basename $0` <ModelName> <newField> <type>"
+	echo
+	echo "  <ModelName> without namespace e.g. 'Event'"
+	echo "  <newField>  the field to be added, camel case as written in the model"
+	echo "  <type> is one of: "
+	echo "    int"
+	echo "    float"
+	echo "    bool"
+	echo "    string"
+	echo "    text"
+	echo "    rte"
+	echo "    password"
+	echo "    date"
+	echo "    datetime"
+	echo "    time"
+	echo "    timesec"
+	echo "    select"
+	echo "    date_timestamp"
+	echo "    datetime_timestamp"
+	echo
+	echo "Examples:"
+	echo "    `basename $0` Event title string"
+	echo "    `basename $0` Event start datetime"
+	echo "    `basename $0` Event end datetime"
+	echo "    `basename $0` Event description rte"
+	echo "    `basename $0` Event isTop bool"
+	echo "    `basename $0` Product price float"
+
+	exit 1
+fi
+
 model=$1
 property=$2
 typ=$3
