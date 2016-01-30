@@ -5,6 +5,11 @@
 # TODO: @required support
 # TODO: add relation with optional @lazy support
 
+if [ ! -e "ext_emconf.php" ]; then
+	echo "Error: This script needs to be run from an extensions root dir"
+	exit 1
+fi
+
 model=$1
 property=$2
 typ=$3
