@@ -73,8 +73,14 @@ default_value="${default_values["$typ"]}"
 
 #######################################################################################################################
 
-# $tca
-sed -i "s/\('showRecordFieldList.*\)',\$/\1, $field',/" $tca_file
+# TCA
+
+# The first sed command is a fix for extension_builder's trailing comma in searchFields
+sed -i \
+	-e "s/\('searchFields' => .*\),',/\1',/" \
+	-e "s/\('searchFields.*\)',\$/\1,$field',/" \
+	-e "s/\('showRecordFieldList.*\)',\$/\1, $field',/" \
+	$tca_file
 
 # Place before the access tab, if that is available
 if grep --quiet -- '--div--;LLL:EXT:cms/locallang_ttc.xlf:tabs.access' $tca_file; then
@@ -106,8 +112,6 @@ sed -i "s/.*<\/body>/\t\t\t<trans-unit id=\"${field}.description\">\n\t\t\t\t<so
 
 #ext_tables.sql
 sed -i "s/CREATE TABLE ${tablename} (/&\n\n\t${field} ${sql_type},/" ext_tables.sql
-
-# TODO: add to searchFields in ext_tables.php ?
 
 #if grep --quient function 
 
