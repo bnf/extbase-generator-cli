@@ -184,6 +184,7 @@ sql_type="${sql_types["$typ"]}"
 sed -i \
 	-e "s/\('searchFields' => .*\),',/\1',/" \
 	-e "s/\('searchFields.*\)',\$/\1,$field',/" \
+	-e "s/\('searchFields' => '\),\(.*\)/\1\2/" \
 	-e "s/\('showRecordFieldList.*\)',\$/\1, $field',/" \
 	$tca_file
 
