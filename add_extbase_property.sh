@@ -306,4 +306,4 @@ echo
 echo "Edit Resources/Private/Language/locallang_db.xlf to edit the label shown in the TCA."
 echo "Edit Resources/Private/Language/locallang.xlf to edit the label shown in the Frontend."
 echo
-echo "You should edit ext_tables.sql, $tca_file and $model_file to move some definitions to the proper place."
+echo "You should edit $tca_file to move the column definition to the proper place."
