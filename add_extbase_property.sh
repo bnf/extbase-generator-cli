@@ -241,14 +241,43 @@ sed -i -f - ext_tables.sql << EOF
 EOF
 
 
-sed -i "\$s#^#\n\
+sed -i -f - ${model_file} << EOF
+# Use ^class selector to ensure we're adding the property only once
+/^class/ {
+	:loop
+	/---PROPERTY--/! {
+		# Try to define the new property before the first function
+		/[^ ]*public function / {
+			s/\n\n\([^\n][^\n]*\n\)*[ \t]*public function/\n\n---PROPERTY---&/
+		}
+	}
+	/\n}/ {
+		# If we've found no function, add the new property to the end of the file
+		/---PROPERTY--/! {
+			s/\n}/\n---PROPERTY---&/
+		}
+		s/\n}/\n\n---GETTER---&/
+		s/\n}/\n\n---SETTER---&/
+
+		b replace
+	}
+	N
+	bloop
+}
+
+# leave the script here – functionality below is explicitly requesting by a jump
+b
+
+:replace
+s#\n---PROPERTY---#\n\
     /**\n\
      * ${property}\n\
      *\n\
      * @var ${php_type}\n\
      */\n\
-    protected \$${property} = ${default_value};\n\
-\n\
+    protected \$${property} = ${default_value};#
+
+s#\n---GETTER---#\n\
     /**\n\
      * Returns the ${property}\n\
      *\n\
@@ -257,8 +286,9 @@ sed -i "\$s#^#\n\
     public function get${uproperty}()\n\
     {\n\
         return \$this->${property};\n\
-    }\n\
-\n\
+    }#
+
+s#\n---SETTER---#\n\
     /**\n\
      * Sets the ${property}\n\
      *\n\
@@ -268,8 +298,8 @@ sed -i "\$s#^#\n\
     public function set${uproperty}(\$${property})\n\
     {\n\
         \$this->${property} = \$${property};\n\
-    }\n#" \
-	$model_file
+    }#
+EOF
 
 echo "Created \$${property} in ${model}"
 echo
