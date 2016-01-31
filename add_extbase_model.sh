@@ -81,8 +81,11 @@ EOL
 
 cat >> ext_tables.php << EOL
 
-\\TYPO3\\CMS\\Core\\Utility\\ExtensionManagementUtility::addLLrefForTCAdescr('${tablename}', 'EXT:${extension}/Resources/Private/Language/locallang_csh_${tablename}.xlf');
 \\TYPO3\\CMS\\Core\\Utility\\ExtensionManagementUtility::allowTableOnStandardPages('${tablename}');
+\\TYPO3\\CMS\\Core\\Utility\\ExtensionManagementUtility::addLLrefForTCAdescr(
+    '${tablename}',
+    'EXT:${extension}/Resources/Private/Language/locallang_csh_${tablename}.xlf'
+);
 EOL
 
 
