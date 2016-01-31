@@ -2,7 +2,7 @@
 
 # TODO: fail if the current directon is not under version control
 # TODO: fail if there are uncommitted changes
-# TODO: @required support
+# TODO: @validate NotEmpty support
 # TODO: add relation with optional @lazy support
 # TODO: search backwards for ext_emconf.php and cd to that directory and use it as extension name
 
