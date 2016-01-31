@@ -217,10 +217,29 @@ sed -i "s/.*<\/body>/\t\t\t<trans-unit id=\"${field}.description\">\n\t\t\t\t<so
 	Resources/Private/Language/locallang_csh_${tablename}.xlf
 
 
-#ext_tables.sql
-sed -i "s/CREATE TABLE ${tablename} (/&\n\n\t${field} ${sql_type},/" ext_tables.sql
+# Try to place the new field before tstamp (or if that fails directly after the CREATE TABLE statement)
+sed -i -f - ext_tables.sql << EOF
+/^CREATE TABLE tx_extensionbuildertext_domain_model_foo (/ {
+	# Fill up the current buffer with the following lines until we find the trailing ');'
+	:loop
+	/);/! {
+		N
+		b loop
+	}
 
-#if grep --quient function 
+	# This implies tstamp to be the first non-model field
+	# and that model fields and tstamp are seperated by two newlines
+	# (that is the case for extension_builder generated files and our generator)
+	s/\n\n[ \t]*tstamp /\n\t${field} ${sql_type},&/
+
+	# skip the following CREATE TABLE replace if we've already added
+	tend
+
+	s/CREATE TABLE[^\n(]*([^\n]*\n/&\t${field} ${sql_type},\n/
+	:end
+}
+EOF
+
 
 sed -i "\$s#^#\n\
     /**\n\
