@@ -186,6 +186,7 @@ sed -i \
 	-e "s/\('searchFields.*\)',\$/\1,$field',/" \
 	-e "s/\('searchFields' => '\),\(.*\)/\1\2/" \
 	-e "s/\('showRecordFieldList.*\)',\$/\1, $field',/" \
+	-e "s/'label' => 'uid'/'label' => '${field}'/" \
 	$tca_file
 
 # Place before the access tab, if that is available
