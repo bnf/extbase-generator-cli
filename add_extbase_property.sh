@@ -132,13 +132,16 @@ declare -A tca_evals=(
 	["select"]=""
 	["date_timestamp"]="date"
 	["datetime_timestamp"]="datetime"
+
+	["file"]=""
+	["image"]=""
 )
 
 declare -A tca_option_map=(
 	["int"]="'size' => 30"
 	["string"]="'size' => 30"
 	["text"]="'cols' => 40, 'rows' => 15"
-	["rte"]="'cols' => 40, 'rows' => 15"
+	["rte"]="'cols' => 40, 'rows' => 15, 'defaultExtras' => 'richtext[]:rte_transform[mode=ts_links]'"
 
 	["password"]="'size' => 30"
 	["float"]="'size' => 30"
