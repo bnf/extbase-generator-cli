@@ -180,24 +180,20 @@ sql_type="${sql_types["$typ"]}"
 
 # TCA
 
-# The first sed command is a fix for extension_builder's trailing comma in searchFields
-sed -i \
-	-e "s/\('searchFields' => .*\),',/\1',/" \
-	-e "s/\('searchFields.*\)',\$/\1,$field',/" \
-	-e "s/\('searchFields' => '\),\(.*\)/\1\2/" \
-	-e "s/\('showRecordFieldList.*\)',\$/\1, $field',/" \
-	-e "s/'label' => 'uid'/'label' => '${field}'/" \
-	$tca_file
-
-# Place before the access tab, if that is available
-if grep --quiet -- '--div--;LLL:EXT:cms/locallang_ttc.xlf:tabs.access' $tca_file; then
-	sed -i "s/\('showitem' => '..*\)--div/\1$field, --div/" $tca_file
-else
-	sed -i "s/\('showitem' => '..*\)'),/\1, $field'),/" $tca_file
-fi
-
-
 sed -i -f - $tca_file << EOF
+s/\('searchFields' => .*\),',/\1',/
+s/\('searchFields.*\)',\$/\1,$field',/
+s/\('searchFields' => '\),\(.*\)/\1\2/
+s/\('showRecordFieldList.*\)',\$/\1, $field',/
+s/'label' => 'uid'/'label' => '${field}'/
+
+/'showitem' =>/ {
+	# Place before the first tab, if that is available
+	/--div--/s/\('showitem' => '..*\)--div/\1$field, --div/
+	/--div--/!s/\('showitem' => '..*\)'),/\1, $field'),/
+}
+
+
 /[ ]*'columns' =>/ {
 	:loop
 
