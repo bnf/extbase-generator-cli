@@ -27,6 +27,10 @@ model_file=Classes/Domain/Model/${model}.php
 tca_file=Configuration/TCA/${tablename}.php
 locallang_csh_file=Resources/Private/Language/locallang_csh_${tablename}.xlf
 
+mkdir -p \
+	Classes/Domain/Model \
+	Configuration/TCA \
+	Resources/Private/Language \
 
 cat >${model_file} <<EOL
 <?php
