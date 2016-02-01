@@ -196,17 +196,29 @@ else
 	sed -i "s/\('showitem' => '..*\)'),/\1, $field'),/" $tca_file
 fi
 
-sed -i "s#'columns'.*#&\n\n\
-        '${field}' => array(\n\
-            'exclude' => 1,\n\
-            'label' => 'LLL:EXT:${extension}/Resources/Private/Language/locallang_db.xlf:${tablename}.${field}',\n\
-            'config' => array(\n\
-                'type' => '${tca_type}',\n\
-                $tca_options,\n\
-                'eval' => 'trim'\n\
-            ),\n\
-        ),#" \
-	$tca_file
+
+sed -i -f - $tca_file << EOF
+/[ ]*'columns' =>/ {
+	:loop
+
+	/^\([ \t]*\)'columns'.*\n\1[])],/! {
+		N
+		b loop
+	}
+
+	s|^\([ \t]*\)\('columns'.*[^\n]\)\(\n\n*\)\1\([])],\)|\1\2\3\
+\1    '${field}' => array(\n\
+\1        'exclude' => 1,\n\
+\1        'label' => 'LLL:EXT:${extension}/Resources/Private/Language/locallang_db.xlf:${tablename}.${field}',\n\
+\1        'config' => array(\n\
+\1            'type' => '${tca_type}',\n\
+\1            $tca_options,\n\
+\1            'eval' => 'trim'\n\
+\1        ),\n\
+\1    ),\3\
+\1\4|
+}
+EOF
 
 # Locallang fixes
 sed -i "s/.*<\/body>/\t\t\t<trans-unit id=\"${tablename}.${field}\">\n\t\t\t\t<source>${uproperty}<\/source>\n\t\t\t<\/trans-unit>\n&/" \
@@ -305,5 +317,3 @@ echo "Created \$${property} in ${model}"
 echo
 echo "Edit Resources/Private/Language/locallang_db.xlf to edit the label shown in the TCA."
 echo "Edit Resources/Private/Language/locallang.xlf to edit the label shown in the Frontend."
-echo
-echo "You should edit $tca_file to move the column definition to the proper place."
