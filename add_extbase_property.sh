@@ -196,10 +196,8 @@ s/'label' => 'uid'/'label' => '${field}'/
 	/--div--/!s/\('showitem' => '..*\)'),/\1, $field'),/
 }
 
-
 /[ ]*'columns' =>/ {
 	:loop
-
 	/^\([ \t]*\)'columns'.*\n\1[])],/! {
 		N
 		b loop
