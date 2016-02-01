@@ -183,6 +183,9 @@ sql_type="${sql_types["$typ"]}"
 
 # TCA
 
+# Add identation to tca_options. \1 is the backreference to the captured indentation of 'columns'
+tca_options=$(echo "$tca_options" | sed "s/, '/,\\\\n\\\\1            '/g")
+
 sed -i -f - $tca_file << EOF
 s/\('searchFields' => .*\),',/\1',/
 s/\('searchFields.*\)',\$/\1,$field',/
