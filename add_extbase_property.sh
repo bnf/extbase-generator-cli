@@ -58,8 +58,8 @@ tca_file=Configuration/TCA/${tablename}.php
 
 [[ -e "$tca_file" ]] || tca_file=Configuration/TCA/${model}.php
 
-field=`echo $property | sed -r ':a;s/([a-z]+)([A-Z][a-z]+)/\1_\l\2/g;ta'`
-uproperty=`echo $property | sed -r 's/^./\u&/'`
+field=`echo $property | sed ':a;s/\([a-z]\)\([A-Z][a-z]\)/\1_\l\2/g;ta'`
+uproperty=`echo $property | sed 's/^./\u&/'`
 
 
 declare -A type_map=(
