@@ -93,12 +93,11 @@ cat >> ext_tables.php << EOL
 EOL
 
 
-sed -i "s/.*<\/body>/\t\t\t<trans-unit id=\"${tablename}\">\n\t\t\t\t<source>${model}<\/source>\n\t\t\t<\/trans-unit>\n&/" \
-	Resources/Private/Language/locallang.xlf \
-	Resources/Private/Language/locallang_db.xlf
-
 date=`date "+%Y-%m-%dT%H:%I:%SZ"`
-cat > ${locallang_csh_file} << EOL
+for f in Resources/Private/Language/locallang.xlf Resources/Private/Language/locallang_db.xlf ${locallang_csh_file}
+do
+	if [ ! -e $f ]; then
+	cat > $f << EOL
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <xliff version="1.0">
 	<file source-language="en" datatype="plaintext" original="messages" date="${date}" product-name="${extension}">
@@ -108,6 +107,12 @@ cat > ${locallang_csh_file} << EOL
 	</file>
 </xliff>
 EOL
+	fi
+done
+
+sed -i "s/.*<\/body>/\t\t\t<trans-unit id=\"${tablename}\">\n\t\t\t\t<source>${model}<\/source>\n\t\t\t<\/trans-unit>\n&/" \
+	Resources/Private/Language/locallang.xlf \
+	Resources/Private/Language/locallang_db.xlf
 
 
 cat > ${tca_file} << EOL
