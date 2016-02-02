@@ -220,10 +220,12 @@ s/'label' => 'uid'/'label' => '${field}'/
 }
 EOF
 
+
 # Locallang fixes
 sed -i "s/.*<\/body>/\t\t\t<trans-unit id=\"${tablename}.${field}\">\n\t\t\t\t<source>${uproperty}<\/source>\n\t\t\t<\/trans-unit>\n&/" \
 	Resources/Private/Language/locallang.xlf \
 	Resources/Private/Language/locallang_db.xlf
+
 
 sed -i "s/.*<\/body>/\t\t\t<trans-unit id=\"${field}.description\">\n\t\t\t\t<source>${field}<\/source>\n\t\t\t<\/trans-unit>\n&/" \
 	Resources/Private/Language/locallang_csh_${tablename}.xlf

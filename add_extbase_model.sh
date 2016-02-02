@@ -114,7 +114,7 @@ cat > ${tca_file} << EOL
 <?php
 return array(
     'ctrl' => array(
-        'title'    => 'LLL:EXT:${extension}/Resources/Private/Language/locallang_db.xlf:${tablename}',
+        'title' => 'LLL:EXT:${extension}/Resources/Private/Language/locallang_db.xlf:${tablename}',
         'label' => 'uid',
         'tstamp' => 'tstamp',
         'crdate' => 'crdate',
@@ -144,7 +144,6 @@ return array(
         '1' => array('showitem' => ''),
     ),
     'columns' => array(
-
         'sys_language_uid' => array(
             'exclude' => 1,
             'label' => 'LLL:EXT:lang/locallang_general.xlf:LGL.language',
