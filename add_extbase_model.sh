@@ -137,7 +137,7 @@ return array(
             'endtime' => 'endtime',
         ),
         'searchFields' => '',
-        'iconfile' => \\TYPO3\\CMS\\Core\\Utility\\ExtensionManagementUtility::extRelPath('extension_builder_text') . 'Resources/Public/Icons/${tablename}.gif'
+        'iconfile' => \\TYPO3\\CMS\\Core\\Utility\\ExtensionManagementUtility::extRelPath('${extension}') . 'Resources/Public/Icons/${tablename}.gif'
     ),
     'interface' => array(
         'showRecordFieldList' => 'sys_language_uid, l10n_parent, l10n_diffsource, hidden',

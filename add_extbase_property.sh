@@ -233,7 +233,7 @@ sed -i "s/.*<\/body>/\t\t\t<trans-unit id=\"${field}.description\">\n\t\t\t\t<so
 
 # Try to place the new field before tstamp (or if that fails directly after the CREATE TABLE statement)
 sed -i -f - ext_tables.sql << EOF
-/^CREATE TABLE tx_extensionbuildertext_domain_model_foo (/ {
+/^CREATE TABLE ${tablename} (/ {
 	# Fill up the current buffer with the following lines until we find the trailing ');'
 	:loop
 	/);/! {
