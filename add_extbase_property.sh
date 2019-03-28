@@ -32,6 +32,8 @@ if [ $# -lt 3 ]; then
 	echo "    select"
 	echo "    date_timestamp"
 	echo "    datetime_timestamp"
+	echo "    file"
+	echo "    image"
 	echo
 	echo "Examples:"
 	echo "    `basename $0` Event title string"
@@ -43,6 +45,11 @@ if [ $# -lt 3 ]; then
 
 	exit 1
 fi
+
+#uncommitted_changes=$(git status --porcelain 2>/dev/null| egrep "^(M| M)" | wc -l)
+#if [ $uncommitted_changes -gt 0 ]; then
+#	echo "There a uncommite
+#fi
 
 model=$1
 property=$2
@@ -60,6 +67,7 @@ tca_file=Configuration/TCA/${tablename}.php
 
 field=`echo $property | sed ':a;s/\([a-z]\)\([A-Z][a-z]\)/\1_\l\2/g;ta'`
 uproperty=`echo $property | sed 's/^./\u&/'`
+propertyLabel=`echo $property | sed -e 's/[A-Z]/ &/' -e 's/^./\u&/'`
 
 
 declare -A type_map=(
@@ -71,13 +79,18 @@ declare -A type_map=(
 	["password"]="string"
 	["float"]="float"
 	["bool"]="bool"
-	["date"]="\\DateTime"
-	["datetime"]="\\DateTime"
+	["date"]="\\\\DateTime"
+	["datetime"]="\\\\DateTime"
 	["time"]="int"
 	["timesec"]="int"
 	["select"]="int"
-	["date_timestamp"]="\\DateTime"
+	["date_timestamp"]="\\\\DateTime"
 	["datetime_timestamp"]="\\DateTime"
+
+	["file"]="\\\\TYPO3\\\\CMS\\\\Extbase\\\\Domain\\\\Model\\\\FileReference"
+	["image"]="\\\\TYPO3\\\\CMS\\\\Extbase\\\\Domain\\\\Model\\\\FileReference"
+
+	["relation"]="$4"
 )
 
 declare -A default_values=(
@@ -96,6 +109,11 @@ declare -A default_values=(
 	["select"]="0"
 	["date_timestamp"]="null"
 	["datetime_timestamp"]="null"
+
+	["file"]="null"
+	["image"]="null"
+
+	["relation"]="null"
 )
 
 declare -A tca_types=(
@@ -114,6 +132,11 @@ declare -A tca_types=(
 	["select"]="select"
 	["date_timestamp"]="input"
 	["datetime_timestamp"]="input"
+
+	["file"]="file_field"
+	["image"]="file_field"
+
+	["relation"]="inline"
 )
 
 declare -A tca_evals=(
@@ -135,24 +158,33 @@ declare -A tca_evals=(
 
 	["file"]=""
 	["image"]=""
+
+	["relation"]=""
 )
+
+# TODO: defaultExtras need to be placed AFTER the config
 
 declare -A tca_option_map=(
 	["int"]="'size' => 30"
 	["string"]="'size' => 30"
 	["text"]="'cols' => 40, 'rows' => 15"
-	["rte"]="'cols' => 40, 'rows' => 15, 'defaultExtras' => 'richtext[]:rte_transform[mode=ts_links]'"
+	["rte"]="'cols' => 40, 'rows' => 15, 'defaultExtras' => 'richtext[]:rte_transform[mode=ts_css]'"
 
 	["password"]="'size' => 30"
 	["float"]="'size' => 30"
 	["bool"]="'default' => 0"
 	["date"]="'dbType' => 'date', 'size' => 7, 'checkbox' => 0, 'default' => '0000-00-00'"
-	["datetime"]="'dbType' => 'date', 'size' => 12, 'checkbox' => 0, 'default' => '0000-00-00 00:00:00'"
+	["datetime"]="'dbType' => 'datetime', 'size' => 12, 'checkbox' => 0, 'default' => '0000-00-00 00:00:00'"
 	["time"]="'size' => 4, 'checkbox' => 1, 'default' => time()"
 	["timesec"]="'size' => 6, 'checkbox' => 1, 'default' => time()"
 	["select"]="'renderType' => 'selectSingle', 'size' => 1, 'maxitems' => 1, 'items' => [['-- Label --', 0]]"
 	["date_timestamp"]="'size' => 7, 'checkbox' => 1, 'default' => time()"
 	["datetime_timestamp"]="'size' => 12, 'checkbox' => 1, 'default' => time()"
+
+	["file"]=""
+	["image"]=""
+
+	["relation"]="'foreign_table' => '$5', 'foreign_field' => 'parent', 'maxitems' => 9999, 'appearance' => ['collapseAll' => 0, 'levelLinksPosition' => 'top', 'showSynchronizationLink' => 1, 'showPossibleLocalizationRecords' => 1, 'showAllLocalizationLink' => 1,]"
 )
 
 declare -A sql_types=(
@@ -168,13 +200,19 @@ declare -A sql_types=(
 	["datetime"]="datetime DEFAULT '0000-00-00 00:00:00'"
 	["time"]="int(11) DEFAULT '0' NOT NULL"
 	["time_sec"]="int(11) DEFAULT '0' NOT NULL"
-	["select_list"]="int(11) DEFAULT '0' NOT NULL"
+	["select"]="int(11) DEFAULT '0' NOT NULL"
 	["date_timestamp"]="int(11) DEFAULT '0' NOT NULL"
 	["datetime_timestamp"]="int(11) DEFAULT '0' NOT NULL"
+
+	["file"]="int(11) unsigned NOT NULL DEFAULT '0'"
+	["image"]="int(11) unsigned NOT NULL DEFAULT '0'"
+
+	["relation"]="int(11) unsigned DEFAULT '0' NOT NULL"
 )
 
 php_type="${type_map["$typ"]}"
 default_value="${default_values["$typ"]}"
+tca_eval="${tca_evals["$typ"]}"
 tca_type="${tca_types["$typ"]}"
 tca_options="${tca_option_map["$typ"]}"
 sql_type="${sql_types["$typ"]}"
@@ -185,6 +223,7 @@ sql_type="${sql_types["$typ"]}"
 
 # Add identation to tca_options. \1 is the backreference to the captured indentation of 'columns'
 tca_options=$(echo "$tca_options" | sed "s/, '/,\\\\n\\\\1            '/g")
+# TODO add ,\n if tca_options is not empty, and remvoe that inline
 
 sed -i -f - $tca_file << EOF
 s/\('searchFields' => .*\),',/\1',/
@@ -213,7 +252,7 @@ s/'label' => 'uid'/'label' => '${field}'/
 \1        'config' => array(\n\
 \1            'type' => '${tca_type}',\n\
 \1            $tca_options,\n\
-\1            'eval' => 'trim'\n\
+\1            'eval' => '${tca_eval}'\n\
 \1        ),\n\
 \1    ),\3\
 \1\4|
@@ -222,7 +261,7 @@ EOF
 
 
 # Locallang fixes
-sed -i "s/.*<\/body>/\t\t\t<trans-unit id=\"${tablename}.${field}\">\n\t\t\t\t<source>${uproperty}<\/source>\n\t\t\t<\/trans-unit>\n&/" \
+sed -i "s/.*<\/body>/\t\t\t<trans-unit id=\"${tablename}.${field}\">\n\t\t\t\t<source>${propertyLabel}<\/source>\n\t\t\t<\/trans-unit>\n&/" \
 	Resources/Private/Language/locallang.xlf \
 	Resources/Private/Language/locallang_db.xlf
 

@@ -137,13 +137,13 @@ return array(
             'endtime' => 'endtime',
         ),
         'searchFields' => '',
-        'iconfile' => \\TYPO3\\CMS\\Core\\Utility\\ExtensionManagementUtility::extRelPath('${extension}') . 'Resources/Public/Icons/${tablename}.gif'
+        'iconfile' => 'EXT:${extension}/Resources/Public/Icons/${tablename}.gif'
     ),
     'interface' => array(
         'showRecordFieldList' => 'sys_language_uid, l10n_parent, l10n_diffsource, hidden',
     ),
     'types' => array(
-        '1' => array('showitem' => 'sys_language_uid;;;;1-1-1, l10n_parent, l10n_diffsource, hidden;;1, --div--;LLL:EXT:cms/locallang_ttc.xlf:tabs.access, starttime, endtime'),
+        '1' => array('showitem' => 'sys_language_uid;;;;1-1-1, l10n_parent, l10n_diffsource, hidden;;1, --div--;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:tabs.access, starttime, endtime'),
     ),
     'palettes' => array(
         '1' => array('showitem' => ''),
